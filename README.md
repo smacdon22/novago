@@ -18,5 +18,11 @@ Locally run NovaGo! by:
 6. Run "python manage.py runserver"
 7. Open browser to url" http://127.0.0.1:8000/novago"
 
+OR
+
+3. Run "docker build -t novago-app ."
+4. Run "docker run -p 8000:8000 novago-app"
+5. Navigate to http://localhost:8000/novago/
+
 
 If you need an access token (for git password) ask Sarah.
