@@ -1,0 +1,63 @@
+{% extends "template.html" %}
+{% load static %}
+{% load widget_tweaks%}
+
+{% block all %}
+<a href="{% url 'novago:index' %}">
+    <div class="exit-button"><i class='far fa-window-close' style='font-size:36px'></i></div>
+    <script src="https://js.stripe.com/v3/"></script>  <!-- new -->
+</a>
+<div class="modify-trip-layout">
+    <div class="container">
+        <form action="{% url 'novago:book' trip.trip_id %}" method="post">
+            {% csrf_token %}
+            <div class="trip-format">
+                <img src="{% static trip.driver.profile_picture.name %}" class="list-icon"/>
+                <ul>
+                    <li>
+                        Driver: {{ trip.driver.first_name }} {{ trip.driver.last_name }}
+                    </li>
+                    <li>
+                        Where: {{ trip.destination_address }}
+                    </li>
+                    <li>
+                        When: {{ trip.datetime }}
+                    </li>
+                    <li>
+                        Rating: {{ trip.driver.rating }}
+                    </li>
+                    <li>
+                        Passengers: {{ trip.passengers_amount }}
+                    </li>
+                    <li>
+                        Stops: {{ trip.stops }}
+                    </li>
+                </ul>
+              <button type="submit" class="button field1" id="my_button">Submit</button>
+            </div>
+          </form>
+    </div>
+<div class="container">
+
+        <div class="map" id="mapholder">
+            {% comment %} for every trip given in triplist, create and add a marker to the map  {% endcomment %}
+            <script type="text/javascript">
+                var json_trip_list = {{ json_trip_list|safe }};
+                
+                var addresses = [];
+                for (var i = 0; i < json_trip_list.length; i++) {
+                    addresses.push(json_trip_list[i].starting_address);
+                    addresses.push(json_trip_list[i].destination_address);
+                }
+                console.log(addresses);
+                console.log(json_trip_list);
+            </script>
+            <script defer src={% static 'js/generate_map.js' %}> </script>
+        </div>
+    </div>
+    <script src="{% static 'handle_button.js' %}"></script>   <!-- new -->
+</div>
+{%endblock all%}
+
+
+

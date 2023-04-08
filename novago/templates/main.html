@@ -1,0 +1,174 @@
+{% extends "template.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<!-- container with ride and request tabs -->
+<div class="col-5">
+    <div class="tab-format">
+        <input class="radio" id="one" name="group" type="radio" checked>
+        <input class="radio" id="two" name="group" type="radio">
+        <div class="tabs tab-header">
+        <label class="tab" id="one-tab" for="one">rides</label>
+        <label class="tab" id="two-tab" for="two">requests</label>
+        </div>
+        {% comment %} 
+        ? to do here: on click of trip that show that trip on the 
+        ? map with the route pickup and drop off 
+        {% endcomment %}
+
+        <!-- ride list -->
+        <div class="panels tab-container container">
+            <div class="panel" id="one-panel">
+                <div class="list">
+                    <!-- ride list with either a list of trip cards or one card saying no trips -->
+                    {% if triplist.type != QuerySet %}
+                    <p>
+                        Sorry, no trips were found.
+                    </p>
+                    
+                    {% else %}
+                    {% for trip in triplist %}
+                    <div class="list-item">
+                            <img src="{% static trip.driver.profile_picture.name %}" class="list-icon"/>
+                            <ul>
+                                <li>
+                                    Driver: {{ trip.driver.first_name }}
+                                </li>
+                                <li>
+                                    Where: {{ trip.destination_address }}
+                                </li>
+                                <li>
+                                    When: {{ trip.depart_date }}
+                                </li>
+                                <li>
+                                    Rating: {{ trip.driver.rating }}
+                                </li>
+                            </ul>
+                            <button class="button" onclick="showModal({{trip.trip_id}})" >View</button>
+                            <div id="{{trip.trip_id}}" class="modal">
+                            <div class="modal-content">
+                                   <span class="close" id="close{{trip.trip_id}}">&times;</span></button>
+                                <form action="{% url 'novago:book' trip.trip_id %}" method="post">
+                                    {% csrf_token %}
+                                    <img src="{% static trip.driver.profile_picture.name %}" class="list-icon"/>
+                                    <ul>
+                                        <li>
+                                            Driver: <a href="{% url 'novago:user-profile' trip.driver.account_id %}">{{ trip.driver.first_name }} {{ trip.driver.last_name }}</a>
+                                        </li>
+                                        <li>
+                                            Where: {{ trip.starting_address }} to {{ trip.destination_address }}
+                                        </li>
+                                        <li>
+                                            When: {{ trip.depart_date }} at {{ trip.depart_time }}
+                                        </li>
+                                        <li>
+                                            Rating: {{ trip.driver.rating }}
+                                        </li>
+                                        <li>
+                                            Passengers: {{ trip.passengers_amount }}
+                                        </li>
+                                        <li>
+                                            Price: ${{ trip.price }}
+                                        </li>
+                                    </ul>
+                                    <button type="submit" class="button field1" id="my_button">Book</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <!-- request list -->
+            <div class="panel" id="two-panel">
+                <div class="list">
+                    <!-- ride list with either a list of trip cards or one card saying no trips -->
+                    {% for request in requestlist %}
+                    <div class="list-item">
+                            <img src="{% static request.1.profile_picture.name %}" class="list-icon"/>
+                            <ul>
+                                <li>
+                                    Requester: {{ request.1.first_name }}
+                                </li>
+                                <li>
+                                    Where: {{ request.0.destination_address }}
+                                </li>
+                                <li>
+                                    When: {{ request.0.depart_date }}
+                                </li>
+                                <li>
+                                    Rating: {{ request.1.rating }}
+                                </li>
+                            </ul>
+                            <button class="button" onclick="showModal({{ request.0.trip_id }})" >View</button>
+                            <div id="{{ request.0.trip_id }}" class="modal">
+                                <div class="modal-content">
+                                    <span class="close" id="close{{request.0.trip_id}}">&times;</span></button>
+                                <form action="{% url 'novago:take' request.0.trip_id %}" method="post">
+                                    {% csrf_token %}
+                                    <img src="{% static request.1.profile_picture.name %}" class="list-icon"/>
+                                    <ul>
+                                        <li>
+                                            Requester: <a href="{% url 'novago:user-profile' request.1.account_id %}">{{ request.1.first_name }} {{ request.1.last_name }}</a>
+                                        </li>
+                                        <li>
+                                            Where: {{ request.0.starting_address }} to {{ request.0.destination_address }}
+                                        </li>
+                                        <li>
+                                            When: {{ request.0.depart_date }} at {{ request.0.depart_time }}
+                                        </li>
+                                        <li>
+                                            Rating: {{ request.1.rating }}
+                                        </li>
+                                        <li>
+                                            Passengers: {{ request.0.passengers_amount }}
+                                        </li>
+                                        <li>
+                                            Price: ${{ request.0.price }}
+                                        </li>
+                                    </ul>
+                                    <button type="submit" class="button field1" id="my_button">Accept</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- map with search form in header -->
+<div class="col-5-5">
+    <div class="container">
+        <div class="container-header header">
+            <form class="header-form" action="{% url 'novago:search' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input id="ride-search-button" type="submit" value="search" class="button" data-user-id="{{ user_id }}" />
+            </form>
+        </div>
+        
+        <div class="map" id="mapholder">
+        {% comment %} for every trip given in triplist, create and add a marker to the map  {% endcomment %}
+            <script type="text/javascript">
+                var json_trip_list = {{ json_trip_list|safe }};
+            
+                var addresses = [];
+                for (var i = 0; i < json_trip_list.length; i++) {
+                    addresses.push(json_trip_list[i].starting_address);
+                    addresses.push(json_trip_list[i].destination_address);
+                }
+                console.log(addresses);
+                console.log(json_trip_list);
+            </script>
+            <script defer src={% static 'js/generate_map.js' %}> </script>
+        </div>
+    </div>
+</div>
+
+{% endblock content%}

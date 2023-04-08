@@ -1,0 +1,125 @@
+{% extends "template.html" %}
+{% load static %}
+
+{% block content %}
+<!-- profile card -->
+<div class="col-3">
+    <div class="container">
+        <div class="col-12">
+            {% if user.profile_picture %}
+            <img class="p-image profile-picture" id="profile-picture1" src="{% static user.profile_picture.name %}"/>
+            {% else %}
+            <img class="profile-picture fas fa-user-circle"/>
+            {% endif %}
+            {% if user.account_id == user_id %}
+            <div>
+                <form action="{% url 'novago:edit_profile' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="image-upload">
+                        <label for="file-input1">
+                          <img class="fa fa-camera upload-button"/>
+                        </label>
+                        <input id="file-input1" type="file" name="profile_picture" id="profile_picture" onchange="document.getElementById('profile_pic_update').style.display='inline-block'"/>
+                        <input type="submit" class="button" style="display:none" id="profile_pic_update"/>
+                      </div>
+                    
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        <div class="profile-label">{{ user.first_name }} {{user.last_name}}</div>
+
+        <div class="col-12">
+            <div class="profile-rating">
+                {% for star in stars %}
+                <i class='fas fa-star'></i>
+                {% endfor %}
+                {% if half %}
+                <i class='fas fa-star-half'></i>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="col-12">
+            <div class="biography">
+                <ul>
+                    <li>
+                        <i class='fas fa-address-card'></i>Description: {{ user.profile_description }}
+                    </li>
+                    <li>
+                        <i class='fas fa-house-user'></i>Home: {{ user.address }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% if user.account_id == user_id %}
+        <div class="edit-profile-button">
+            <a class="button" href="{% url 'novago:create_account'%}" >Edit</a>
+            <a class="button" href="{% url 'novago:reg_driver'%}" >Driver</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- profile page info, reviews and upcoming trips -->
+<div class="col-8">
+    <div class="container">
+        <!-- reviews-->
+        <div class="profile-header">Reviews <button class="button" style="visibility:hidden">See more</button></div>
+        <div class="list review-list">
+            {% for review in review_list %}
+            <div class="list-item">
+                <img class="list-icon fas fa-user-circle"/>
+                <ul>
+                    <li>
+                        Rating: {{ review.rating }}
+                    </li>
+                    <li>
+                        Details: {{ review.description }}
+                    </li>
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- upcoming trips -->
+        <div class="profile-header">Upcoming Trips <a href="{% url 'novago:your-trips' %}" class="button">See more</a> </div>
+        <div class="list review-list">
+            {% for trip in trip_list %}
+            <div class="list-item">
+                    <li>
+                        Where: {{ trip.destination_address }}
+                    </li>
+                    <li>
+                        When: {{ trip.depart_date }}
+                    </li>
+                </ul>
+                <button class="button" onclick="showModal({{ trip.trip_id }})" >View</button>
+                <div id="{{trip.trip_id}}" class="modal"><div class="modal-content">
+                    <span class="close" id="close{{trip.trip_id}}">&times;</span></button>
+                 <form action="{% url 'novago:your-trips' %}" method="post">
+                     {% csrf_token %}
+                     <img src="{% static trip.driver.profile_picture.name %}" class="list-icon"/>
+                     <ul>
+                         <li>
+                             Where: {{ trip.starting_address }} to {{ trip.destination_address }}
+                         </li>
+                         <li>
+                             When: {{ trip.depart_date }} at {{ trip.depart_time }}
+                         </li>
+                         <li>
+                             Passengers: {{ trip.passengers_amount }}
+                         </li>
+                         <li>
+                             Price: ${{ trip.price }}
+                         </li>
+                     </ul>
+                 </form>
+             </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{%endblock content%}

@@ -1,0 +1,20 @@
+{% extends "template.html" %}
+{% load static %}
+
+{%block login%}
+<div class="page-layout-main" style="justify-content:center; margin-top: 15dvh;">
+        
+    <div class="container">
+        <div class="map" id="mapholder">
+            <script defer src="{% static 'js/generate_map.js' %}"> </script>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="{% url 'novago:login' %}" class="button">login</a>
+        <iframe src="{% url 'novago:login' %}"></iframe>
+        <!--form acceptance/failure messages tbd below-->
+    </div>
+
+</div>
+{%endblock login%}

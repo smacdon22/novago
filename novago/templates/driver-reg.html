@@ -1,0 +1,62 @@
+{% extends "template.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block all %}
+<header>
+  <div class="exit-button">
+    <a href="{% url 'novago:index' %}" class="exit-on-button">
+      <i class="far fa-window-close" style="font-size: 36px"></i>
+    </a>
+  </div>  
+</header>
+
+<!-- container for centering -->
+<div class="page-display">
+<!-- logo on left, possibly add text description -->
+  <div class="col-4">
+    <img class="logo" src="{% static 'images/novago_logo2.svg' %}"/>
+  </div>
+
+<!-- create-account form, add button or toggle for driver application form?, next page goes to form if selected?  -->
+  <div class="col-6">
+    <div class="container">
+      <form class="header-form" action="{% url 'novago:reg_driver' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if driver %}
+        <input name="master_number" type="text" placeholder="Master Number" id="master_number", value="{{ driver.master_number }}", pattern="[A-Z ]{5}[0-9]{9}" title="the first 5 letters of your last name [if your last name has fewer than 5 letters, the difference is made up with spaces], plus the day / month / year of your birth, plus 3 computer-assigned numbers.  ex: SMITH990420001"/>
+        <input name="license_expiry" type="date" placeholder="Expiry" id="license_expiry", value="{{ driver.license_expiration_date }}"/>
+        <input name="license_plate" type="text" placeholder="License Plate Number" id="license_plate", value="{{ driver.license_plate }}", pattern="[A-Z]{3} [0-9]{3}", title="Three letters and three numbers seperated by a space."/>
+        <input name="driver_vin" type="text" placeholder="Vehicle Information Number" id="driver_vin", value="{{ driver.vehicle_information_number }}", pattern="[A-Z0-9]{17}", title="Seventeen letters or numbers."/>
+        <div class="p-image">
+          <img class="profile-picture" id="profile-picture" src="{% static driver.vehicle_picture %}"/>
+          <div class="image-upload">
+            <label for="file-input">
+              <img class="fa fa-camera upload-button"/>
+            </label>
+            <input id="file-input" type="file" name="vehicle_picture" id="vehicle_picture"/>
+          </div>
+        </div>
+        <input type="submit" value="Submit"/>
+        {% else %}
+        <input name="master_number" type="text" placeholder="Master Number" id="master_number", pattern="[A-Z ]{5}[0-9]{9}" title="the first 5 letters of your last name [if your last name has fewer than 5 letters, the difference is made up with spaces], plus the day / month / year of your birth, plus 3 computer-assigned numbers.  ex: SMITH990420001" required/>
+        <input name="license_expiry" type="date" placeholder="Expiry" id="license_expiry" required/>
+        <input name="license_plate" type="text" placeholder="License Plate Number" id="license_plate", pattern="[A-Z]{3} [0-9]{3}", title="Three letters and three numbers seperated by a space." required/>
+        <input name="driver_vin" type="text" placeholder="Vehicle Information Number" id="driver_vin", pattern="[A-Z0-9]{17}", title="Seventeen letters or numbers." required/>
+        <div class="p-image">
+          <img class="profile-picture fas fa-user-circle"/>
+          <div class="image-upload">
+            <label for="file-input">
+              <img class="fa fa-camera upload-button"/>
+            </label>
+            <input id="file-input" type="file" name="vehicle_picture" id="vehicle_picture" required/>
+          </div>
+        </div>
+        <input type="submit" value="Submit"/>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock all %} 

@@ -1,0 +1,23 @@
+<nav id="mySidenav" role="navigation" class="w-nav-menu col-1 navbar">
+  <!-- test link to profile, user 1 creates an account, will eventually take logged in user's id -->
+  <ul>
+    <li>
+      <a href="{% url 'novago:profile'%}" class="w-nav-link" data-title="Profile">
+        <i class="icon fa-solid fa-user"></i>
+      </a>
+      <p class="subtitle">profile</p>
+    </li>
+    <li>
+      <a href="{% url 'novago:new-trip' %}" class="w-nav-link" data-title="Post a Trip">
+        <i class="icon fas fa-clipboard"></i>
+      </a>
+      <p class="subtitle">post</p>
+    </li>
+    <li>
+      <a href="{% url 'novago:your-trips' %}" class="w-nav-link" data-title="Your Trips">   
+        <i class="icon fa-solid fa-car-side"></i>
+      </a>
+      <p class="subtitle">trips</p>
+    </li>
+  </ul>
+</nav>

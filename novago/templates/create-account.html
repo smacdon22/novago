@@ -1,0 +1,71 @@
+{% extends "template.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block all %}
+<header>
+  <div class="exit-button">
+    <a href="{% url 'novago:index' %}" class="exit-on-button">
+      <i class="far fa-window-close" style="font-size: 36px"></i>
+    </a>
+  </div>  
+</header>
+
+<!-- container for centering -->
+<div class="page-display">
+<!-- logo on left, possibly add text description -->
+  <div class="col-4">
+    <img class="logo" src="{% static 'images/novago-logo.svg' %}"/>
+  </div>
+
+<!-- create-account form, add button or toggle for driver application form?, next page goes to form if selected?  -->
+  <div class="col-6">
+    <div class="container">
+      <div class="col-12">
+        <form action="{% url 'novago:edit_profile'%}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="col-12">
+            <div class="p-image">
+              <img id="profile-picture" class="profile-picture" src="{% static user.profile_picture %}"/>
+              <div class="image-upload">
+                <label for="file-input" class="label">
+                  <img class="fa fa-camera upload-button"/>
+                </label>
+                <input id="file-input" type="file" name="profile_picture" accept="image/*"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-5">
+            <label for="first_name" class="label">First Name: </label>
+          </div>
+          <div class="col-7"> 
+            <input name="first_name" type="text" placeholder="First Name" id="first_name" value="{{user.first_name}}"/>
+          </div>
+          <div class="col-5">
+            <label for="last_name" class="label">Last Name: </label>
+          </div>
+          <div class="col-7"> 
+            <input name="last_name" type="text" placeholder="Last Name" id="last_name" value="{{user.last_name}}"/>
+          </div>
+          <div class="col-5">
+            <label for="profile_description" class="label">Bio: </label>
+          </div>
+          <div class="col-7"> 
+            <input name="profile_description" type="text" placeholder="Bio" id="profile_description" value="{{user.profile_description}}"/>
+          </div>
+          <div class="col-5">
+            <label for="address" class="label">Address: </label>
+          </div>
+          <div class="col-7"> 
+            <input name="address" type="text" placeholder="Address" id="address" value="{{user.address}}"/>
+          </div>
+          <div class="col-12">          
+            <button type="submit" class="button" id="my_button">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock all %}  

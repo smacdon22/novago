@@ -1,0 +1,98 @@
+{% extends "template.html" %}
+{% load static %}
+{% load widget_tweaks%}
+
+<!-- trip editing, available when select modify on trip -->
+{% block all %}
+<!-- exit button -->
+<header>
+    <div class="exit-button">
+      <a href="{% url 'novago:index' %}" class="exit-on-button">
+        <i class="far fa-window-close" style="font-size: 36px"></i>
+      </a>
+    </div>
+</header>
+<!-- container for centering -->
+<div class="col-12 page-display">
+    <!-- container with book-trip form -->
+      <div class="col-5">
+        <div class="container">
+            <form action="{% url 'novago:modify_trip' trip_id %}" method="post">
+                {% csrf_token %}
+                <div class="col-12">
+                {{ form.destination_address|add_label_class:"label" }} 
+                {% render_field form.destination_address%}
+                </div>
+                <div class="col-12">
+                {{ form.starting_address|add_label_class:"label" }} 
+                {% render_field form.starting_address %} 
+                </div>
+                <div class="col-6">
+                {{ form.depart_date|add_label_class:"label" }} 
+                {% render_field form.depart_date %}
+                </div>
+                <div class="col-6">
+                {{ form.depart_time|add_label_class:"label" }} 
+                {% render_field form.depart_time%}
+                </div>
+                <div class="col-6">
+                {{ form.stops|add_label_class:"label"}}
+                </div>
+                <div class="col-6">
+                {% render_field form.stops %}
+                </div>
+                <div class="col-12">
+                {{ form.price |add_label_class:"label"}}
+                {% render_field form.price %}
+                </div>
+                <div class="col-12">
+                {{ form.passengers_amount|add_label_class:"label" }} 
+                {% render_field form.passengers_amount %}
+                </div>
+                <div class="col-12">
+                <button type="submit" class="button field1" id="my_button">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-6">
+    <div class="container">
+        <div class=" container-header header">Passengers</div>
+            {% csrf_token %}
+            {% for passenger in passenger_list %}
+            <div class="list-item">
+                <img class="list-icon" src="{% static passenger.profile_picture.name %}" />
+                <ul>
+                    <li>
+                        ID: {{ passenger.account_id }}  
+                    </li>
+                    <li>
+                        First Name: {{ passenger.first_name }}  
+                    </li>
+                    <li>
+                        Last Name: {{ passenger.last_name }}
+                    </li>
+                    <li>
+                        Rating: {{ passenger.rating }}  
+                    </li>
+                    <li>
+                        Address: {{ passenger.address }}  
+                    </li>
+                    <li>
+                        <form onsubmit="return confirm('Are you sure?');" action="{% url 'novago:kick_passenger' trip_id passenger.account_id%}" method="POST">
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            {% csrf_token %}
+                            <button>Delete</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+{%endblock all%}
+
+
+

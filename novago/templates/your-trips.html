@@ -1,0 +1,114 @@
+{% extends "template.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if message %}
+<div class="modal" id="failed_booking" style="display:block">
+    <div class="modal-content">
+        <button onclick="document.getElementById('failed_booking').style.display='none'"><span class="close">&times;</span></button>
+        <div>
+            <p style="color:black;">{{ message }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="col-5">
+        <!-- All past trips that you are a passenger OR a driver  -->
+    <div class="tab-format">
+        <input class="radio" id="one" name="group" type="radio" checked>
+        <input class="radio" id="two" name="group" type="radio">
+        <div class="tabs tab-header">
+            <label class="tab" id="one-tab" for="one">upcoming</label>
+            <label class="tab" id="two-tab" for="two">completed</label>
+        </div>
+        <div class="panels tab-container container">
+            <div class="panel" id="one-panel">
+                <div class="list">
+                    {% for trip in upcoming_trips %}
+                    <div class="list-item">
+                        <img class="list-icon" src="{% static trip.driver.profile_picture.name %}" />
+                        <ul>
+                            <li>
+                                Driver: {{ trip.driver.first_name }}
+                            </li>
+                            <li>
+                                Where: {{ trip.destination_address }}
+                            </li>
+                            <li>
+                                When: {{ trip.depart_date }}
+                            </li>
+                            <li>
+                                Price: ${{ trip.price }}
+                            </li>
+                            <li>
+                                Rating: {{ trip.driver.rating }}
+                            </li>
+                        </ul>
+                        <a href="{%url 'novago:kick-yourself' trip.trip_id %}" class="button">Leave Trip</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="panel" id="two-panel">
+                <div class="list">
+                    {% for trip in past_trips %}
+                        <div class="trip-list-item">
+                            <img class="list-icon" src="{% static trip.driver.profile_picture.name %}" />
+                            <ul>
+                                <li>
+                                    Driver: <a href="{% url 'novago:user-profile' trip.driver.account_id %}">{{ trip.driver.first_name }}</a>
+                                </li>
+                                <li>
+                                    Where: {{ trip.destination_address }}
+                                </li>
+                                <li>
+                                    When: {{ trip.depart_date }}
+                                </li>
+                                <li>
+                                    Rating: {{ trip.driver.rating }}
+                                </li>
+                            </ul>
+                            {% if trip not in rated_trips %}
+                            <a href="{%url 'novago:rate' trip.trip_id %}" class="button">Rate Trip</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- this should display trip detail view -->
+<div class="col-6">
+    <div class="container">
+        <div class="container-header header">Driver Trips</div>
+        <div class="list">
+        {% for trip in your_trips %}
+        <div class="list-item">
+            <img class="list-icon" src="{% static trip.driver.profile_picture.name %}" />
+            <ul>
+                <li>
+                    Driver: {{ trip.driver.first_name }}
+                </li>
+                <li>
+                    Where: {{ trip.destination_address }}
+                </li>
+                <li>
+                    When: {{ trip.depart_date }}
+                </li>
+                <li>
+                    Price: ${{ trip.price }}
+                </li>
+                <li>
+                    <a href="{% url 'novago:modify_trip' trip.trip_id %}" class="button">Modify</a>
+                    <a href="{% url 'novago:cancel_trip' trip.trip_id %}" class="button">Cancel</a>
+                </li>
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+{%endblock content%}

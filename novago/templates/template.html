@@ -1,0 +1,50 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NovaGo!</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/novago-logo.svg' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script src="https://use.fontawesome.com/47749f7f23.js"></script>
+    <script src="https://kit.fontawesome.com/08e3d49f95.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="{% static "js/jquery.js" %}"></script>
+    <script defer src="{% static 'js/google_places.js' %}"></script>
+    <script defer src="{% static 'js/main_page.js' %}"></script>
+    <script defer src="https://maps.google.com/maps/api/js?key={{google_api_key|safe}}&libraries=places&callback=initMap&callback=initAutocomplete"></script>
+    {%block head%}{%endblock head%}
+  </head>
+
+<body>
+  <!-- block for pages without navbar and header, template used for head content  -->
+  {% block all %}
+  <!-- block for header content -->
+  {% block header%}
+    <header>
+      <div class="logo-header">
+        {% if session %}
+        <a href="{% url 'novago:index' %}"><img src="{% static 'images/novago-logo.svg' %}" class="logo"></a>
+        <a class="button" href="{% url 'novago:logout' %}" style="position:absolute;right:5px;"><i class="fas fa-sign-out"></i></a>
+        {% else %}
+        <img src="{% static 'images/novago-logo.svg' %}" class="logo">
+        <a class="button" href="{% url 'novago:login' %}" style="position:absolute;right:5px;"><i class="fas fa-sign-in"></i></a>
+        {% endif %}
+      </div>
+    </header>
+  {% endblock header %}
+
+  <!-- block referencing navbar html -->
+  {% block navbar %}
+    {% include "navbar.html" %}   
+  {% endblock navbar %}
+
+  <!-- block for page content, most pages extend from here -->
+  {% block content %}{% endblock content %}
+  </div>
+
+  {% endblock all %}
+</body>
+</html>

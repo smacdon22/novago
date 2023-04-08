@@ -1,0 +1,12 @@
+{% extends "template.html" %}
+{% load static %}
+{% load widget_tweaks%}
+
+{% block all %}
+<a href="{% url 'novago:index' %}">
+    <div class="exit-button"><i class='far fa-window-close' style='font-size:36px'></i></div>
+</a>
+<div>
+    <p>{{ message }}</p>
+</div>
+{%endblock all%}
